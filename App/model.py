@@ -38,68 +38,87 @@ assert cf
 from datetime import datetime, time
 from DISClib.ADT import map as m
 from prettytable import PrettyTable
-
-
-
-
+import time
 
 #•••••••••••••••••••••••••••••••••••••••••
-#   Inicializacion del catalogo
+#   Inicializacion del catalogo.
 #•••••••••••••••••••••••••••••••••••••••••
 
 def newAnalyzer():
-    """ Inicializa el analizador
-    Crea una lista vacia para guardar todos los crimenes
-    Se crean indices (Maps) por los siguientes criterios:
-    -Fechas
-    Retorna el analizador inicializado.
+
+    """ 
+
+        Inicializa el analizador.
+
+        Crea un nuevo Map para cargar el archivo, dentro de este se
+        crea una lista vacia para cargar alli todos los casos de
+        avistamientos. También, crea indices para la busqueda de los
+        avistamientos por criterios de casos por ciudad, casos por
+        duración de segundos y casos por hora de avistamiento, los datos
+        se indicarán en los indices dentro de un Map de tipo RBT. 
+
+        Retorna el analizador inicializado.
+
     """
     
     analyzer = mp.newMap(
-                        2,
+                        5,
                         maptype = "CHAINING",
-                        loadfactor = 4.0,
+                        loadfactor = 1.0,
                         comparefunction = None
                     )
 
     mp.put(
             analyzer,
             "cases",
-            lt.newList('ARRAY_LIST')
+            lt.newList(
+                        'ARRAY_LIST'
+                        )
             )
 
     mp.put(
             analyzer,
             "casesSize",
-            lt.size(me.getValue(mp.get(analyzer, "cases"))) 
+            lt.size(
+                    me.getValue(
+                                mp.get(
+                                        analyzer, "cases"
+                                    )
+                                )
+                    ) 
             )
 
     mp.put(
             analyzer,
             "casesByCity",
-            om.newMap(  omaptype='RBT',
-                        comparefunction=None)
+            om.newMap(  
+                        omaptype='RBT',
+                        comparefunction=None
+                    )
             )
 
     mp.put(
             analyzer,
             "casesBySeconds",
-            om.newMap(  omaptype='RBT',
-                        comparefunction=None)
+            om.newMap(  
+                        omaptype='RBT',
+                        comparefunction=None
+                        )
             )
 
     mp.put(
             analyzer,
             "casesByHour",
-            om.newMap(  omaptype='RBT',
-                        comparefunction=None)
+            om.newMap(  
+                        omaptype='RBT',
+                        comparefunction=None
+                    )
             )
 
     return analyzer
 
-
 #•••••••••••••••••••••••••••••••••••••••••
-#Funciones de consulta
+#Funciones de consulta.
 #•••••••••••••••••••••••••••••••••••••••••
 
 def getCasesByCity(analyzer, ciity):
@@ -110,99 +129,241 @@ def getCasesByCity(analyzer, ciity):
 
     """
 
-    # Se extrae el mapa de avistamientos
-    cases = me.getValue(mp.get(analyzer, "cases"))
+    start_time = time.process_time()
 
-    # Se guarda en una lista todas las ciudades
-    cityKeys = lt.newList("ARRAY_LIST")
+    # Se extrae el mapa de avistamientos del analyzer.
+    cases = me.getValue(
+                        mp.get(
+                                analyzer, 
+                                "cases"
+                            )
+                        )
+
+    # Se crea una lista vacia para guardar los nombres de todas las
+    # ciudades.
+    cityKeys = lt.newList(
+                            "ARRAY_LIST"
+                        )
     
     # Se revisan las ciudades de cada avistamiento, si no se ha agregado la ciudad al mapa que indica
-    # los avistamientos por ciudad, se grega la ciudad con una lista vacia como valor
+    # los avistamientos por ciudad, se grega la ciudad con una lista
+    # vacia como valor.
     for i in lt.iterator(cases):
-        if om.contains(me.getValue(mp.get(analyzer, "casesByCity")), i["city"]) == False:
-            lt.addLast(cityKeys, i["city"])
-            om.put(me.getValue(mp.get(analyzer, "casesByCity")), i["city"], lt.newList("ARRAY_LIST"))
 
-    # Se añade cada caso de avistamiento a lista que corresponde a los casos de avistamientos de cada
-    # ciudadas anteriormente
+        if om.contains(
+                        me.getValue(
+                                    mp.get(
+                                            analyzer,
+                                            "casesByCity"
+                                            )
+                                    ),
+                                    i["city"]
+                                    ) == False:
+
+            lt.addLast(
+                        cityKeys,
+                        i["city"]
+                        )
+
+            om.put(
+                    me.getValue(
+                                mp.get(
+                                        analyzer,
+                                        "casesByCity"
+                                        )
+                                ),
+                    i["city"], 
+                    lt.newList(
+                                "ARRAY_LIST"
+                                )
+                    )
+
+    # Se añade cada caso de avistamiento a lista que corresponde a los
+    # casos de avistamientos de cada ciudad añadidad anteriormente.
     for i in lt.iterator(cases):
-        lt.addLast(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByCity")), i["city"])), i)
 
-    # Se eliminan los avistamientos duplicados en cada ciudad
+        lt.addLast(
+                    me.getValue(
+                                om.get(
+                                        me.getValue(
+                                                    mp.get(
+                                                            analyzer,
+                                                            "casesByCity"
+                                                            )
+                                                    ),
+                                        i["city"]
+                                    )
+                                ),
+                    i
+                )
+
+    # Se eliminan los avistamientos duplicados en cada ciudad.
     for i in lt.iterator(cityKeys):
+
         pos = 2
-        while pos <= lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByCity")), i))):
-            lt.deleteElement(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByCity")), i)), pos)
+        while pos <= lt.size(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        analyzer,
+                                                                        "casesByCity"
+                                                                        )
+                                                                ),
+                                                    i
+                                                )
+                                            )
+                            ):
+
+            lt.deleteElement(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        analyzer,
+                                                                        "casesByCity"
+                                                                    )
+                                                                ),
+                                                    i
+                                                )
+                                            ), 
+                            pos
+                            )
+            
             pos += 2
             pos -=1
-        om.put(me.getValue(mp.get(analyzer, "casesByCity")), i, me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByCity")), i)))
 
-    # Se incializa un nuevo mapa
+        om.put(
+                me.getValue(
+                            mp.get(
+                                    analyzer,
+                                    "casesByCity"
+                                    )
+                            ), 
+                i,
+                me.getValue(
+                            om.get(
+                                    me.getValue(
+                                                mp.get(
+                                                        analyzer,
+                                                        "casesByCity"
+                                                        )
+                                                ),
+                                i
+                                )
+                            )
+                )
+
+    # Se incializa un nuevo mapa para guardar los datos de salida.
     outMap = mp.newMap(
-           5,
-           maptype = "CHAINING",
-           loadfactor = 4.0,
-           comparefunction = None
-       )
+                        5,
+                        maptype = "CHAINING",
+                        loadfactor = 1.0,
+                        comparefunction = None
+                    )
 
-    mp.put( outMap,
+    mp.put( 
+            outMap,
             "totalCities",
-            None)
+            None
+        )
 
-    mp.put( outMap,
+    mp.put( 
+            outMap,
             "casesByCity",
             None
-            )
+        )
     
-    mp.put( outMap,
+    mp.put( 
+            outMap,
             "top5NCases",
             None
-            )
+        )
 
-    mp.put( outMap,
+    mp.put( 
+            outMap,
             "nCasesByCity",
             None
-            )
+        )
 
-    mp.put( outMap,
+    mp.put( 
+            outMap,
             "recentAndOlderCasesByCity",
             None
-            )
+        )
 
 
-    # Se cargan los datos al mapa
+    # Se cargan los datos al mapa.
 
-    # Se carga la cantidad de ciudades en donde se presentaron avistamientos.
-    mp.put( outMap,
+    # Se carga la cantidad de ciudades en donde se presentaron
+    # avistamientos.
+    mp.put( 
+        
+            outMap,
             "totalCities",
-            lt.size(cityKeys))
+            lt.size(
+                    cityKeys
+                )
 
-    # Se cargan los avistamientos por ciudad
-    mp.put( outMap,
-            "casesByCity",
-            me.getValue(mp.get(analyzer, "casesByCity"))
             )
 
-    # Se crea una nueva lista para almacenar las ciudades y cantidades de avistamientos
-    # en esta ciudad
-    citiesAndNCases = lt.newList("ARRAY_LIST")
+    # Se cargan los avistamientos por ciudad.
+    mp.put( 
 
-    # Se cargan los datos a la lista creada
+            outMap,
+            "casesByCity",
+            me.getValue(
+                        mp.get(
+                                analyzer,
+                                "casesByCity"
+                            )
+                        )
+            
+            )
+
+    # Se crea una nueva lista para almacenar las ciudades y cantidades
+    # de avistamientos en esta ciudad.
+    citiesAndNCases = lt.newList(
+                                    "ARRAY_LIST"
+                                )
+
+    # Se cargan los datos a la lista creada.
     for i in lt.iterator(cityKeys):
-        city = {"city": None,
+
+        city = {
+                "city": None,
                 "nCases": None
                 }
 
         city["city"] = i
-        city["nCases"] = lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), i)))
-        lt.addLast(citiesAndNCases, city)
 
-    # Se ordenan los datos de la lista creada de mayor a menos segun el numero de avistamientos
-    # en cada ciudad
+        city["nCases"] = lt.size(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            outMap, "casesByCity")
+                                                                            ),
+                                                        i)
+                                                )
+                                    )
+
+        lt.addLast(
+                    citiesAndNCases, 
+                    city
+                    )
+
+    # Se ordenan los datos de la lista creada de mayor a menor segun el
+    # numero de avistamientos en cada ciudad.
     sortByNCases(citiesAndNCases)
 
-    #Se crea una nueva lista para almacenar las 5 ciudades con mayor numero de avistamientos
-    topCitiesAndNCases = lt.newList("ARRAY_LIST")
+    # Se crea una nueva lista para almacenar las 5 ciudades con mayor
+    # numero de avistamientos.
+    topCitiesAndNCases = lt.newList(
+                                    "ARRAY_LIST"
+                                    )
+
+    # Se añaden los avistamientos a la lista creada anteriormente.
 
     try:
         lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 1))
@@ -229,149 +390,816 @@ def getCasesByCity(analyzer, ciity):
     except:
         lt.addLast(topCitiesAndNCases, createEmptyCase())
 
-    # Se carga la lista creada anteriormente
-    mp.put( outMap,
+    # Se carga la lista creada anteriormente al ultimo Map creado.
+    mp.put( 
+            outMap,
             "top5NCases",
             topCitiesAndNCases
-            )
+        )
 
-    # Se guarda el numero de avistamientos en una ciudad especifica dada por el usuario.
+    # Se guarda el numero de avistamientos en una ciudad especifica dada
+    # por el usuario.
     mp.put( outMap,
             "nCasesByCity",
-            lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))
+            lt.size(
+                    me.getValue(
+                                om.get(
+                                        me.getValue(
+                                                    mp.get(
+                                                            outMap, 
+                                                            "casesByCity"
+                                                            )
+                                                    ),
+                                        ciity
+                                    )
+                                )
+                    )
             )
 
-    # Se crea una nueva lista para guardar los tres avistamientos mas antiguos y mas recientes de
-    # ciudad dada por el usuario.        
-    recentAndOlderCasesByCity = lt.newList("ARRAY_LIST")
+    # Se crea una nueva lista para guardar los tres avistamientos mas
+    # antiguos y mas recientes de ciudad dada por el usuario.        
+    recentAndOlderCasesByCity = lt.newList(
+                                            "ARRAY_LIST"
+                                        )
+
+    # Se añaden los elementos a la lista creada anteriormente.
 
     try:
-        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 1))
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    lt.getElement(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            outMap,
+                                                                            "casesByCity")
+                                                                    ),
+                                                        ciity
+                                                    )
+                                                ),
+                                    1
+                                )
+                )
     except:
-        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    createEmptyCase()
+                )
 
     try:
-        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 2))
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    lt.getElement(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            outMap,
+                                                                            "casesByCity"
+                                                                        )
+                                                                    ), 
+                                                        ciity
+                                                    )
+                                                ),
+                                    2
+                                )
+                    )
     except:
-        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    createEmptyCase()
+                )
 
     try:
-        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 3))
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    lt.getElement(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            outMap,
+                                                                            "casesByCity"
+                                                                        )
+                                                                    ), 
+                                                        ciity
+                                                    )
+                                                ),
+                                    3
+                                )
+                    )
     except:
-        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    createEmptyCase()
+                    )
 
     try: 
-        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))-2))
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    lt.getElement(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            outMap,
+                                                                            "casesByCity"
+                                                                            )
+                                                                    ),
+                                                        ciity
+                                                    )
+                                                ),
+                                    lt.size(
+                                            me.getValue(
+                                                        om.get(
+                                                                me.getValue(
+                                                                            mp.get(
+                                                                                    outMap,
+                                                                                    "casesByCity"
+                                                                                    )
+                                                                            ),
+                                                                ciity
+                                                            )
+                                                        )
+                                            )-2
+                                    )
+                    )
     except:
-        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    createEmptyCase()
+                )
 
-    if lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))-1) == lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 1): 
+    if lt.getElement(
+                    me.getValue(
+                                om.get(
+                                        me.getValue(
+                                                    mp.get(
+                                                            outMap,
+                                                            "casesByCity")
+                                                            ),
+                                        ciity)
+                                ),
+                    lt.size(
+                            me.getValue(
+                                        om.get(
+                                                me.getValue(
+                                                            mp.get(
+                                                                    outMap,
+                                                                    "casesByCity"
+                                                                    )
+                                                            ),
+                                                ciity)
+                                        )
+                            )-1
+                    ) == lt.getElement(
+                                        me.getValue(
+                                                    om.get(
+                                                            me.getValue(
+                                                                        mp.get(
+                                                                                outMap,
+                                                                                "casesByCity"
+                                                                            )
+                                                                        ), 
+                                                            ciity
+                                                        )
+                                                    ), 
+                                        1
+                                    ): 
         lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
     else:
-        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))-1))
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    lt.getElement(
+                                    me.getValue
+                                                (om.get
+                                                        (me.getValue
+                                                                    (mp.get
+                                                                            (
+                                                                                outMap,
+                                                                                "casesByCity"
+                                                                            )
+                                                                    ), 
+                                                        ciity
+                                                        )
+                                                ),
+                                    lt.size(
+                                            me.getValue(
+                                                        om.get(
+                                                                me.getValue(
+                                                                            mp.get(
+                                                                                    outMap,
+                                                                                    "casesByCity"
+                                                                                    )
+                                                                            ),
+                                                                ciity)
+                                                        )
+                                            )-1
+                                    )
+                )
 
-    if lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))) == lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 1): 
-        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+    if lt.getElement(
+                        me.getValue(
+                                    om.get(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "casesByCity"
+                                                                )
+                                                        ),
+                                            ciity)
+                                    ),
+                        lt.size(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "casesByCity"
+                                                                        )
+                                                                ),
+                                                    ciity
+                                                )
+                                            )
+                                )
+                    ) == lt.getElement(
+                                        me.getValue(
+                                                    om.get(
+                                                            me.getValue(
+                                                                        mp.get(
+                                                                                outMap, 
+                                                                                "casesByCity"
+                                                                                )
+                                                                        ),
+                                                            ciity)
+                                                    ), 
+                                        1
+                                        ): 
+
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    createEmptyCase()
+                    )
     else:
-        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))))
+        lt.addLast(
+                    recentAndOlderCasesByCity,
+                    lt.getElement(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            outMap,
+                                                                            "casesByCity"
+                                                                            )
+                                                                    ),
+                                                        ciity)
+                                                ),
+                                    lt.size(
+                                            me.getValue(
+                                                        om.get(
+                                                                me.getValue(
+                                                                            mp.get(
+                                                                                    outMap,
+                                                                                    "casesByCity"
+                                                                                    )
+                                                                            ),
+                                                                ciity
+                                                            )
+                                                        )
+                                            )
+                                )
+                    )
 
+    # Se añade la lista a la que se le añadieron los datos al Map de
+    # salida.
     mp.put( outMap,
             "recentAndOlderCasesByCity",
             recentAndOlderCasesByCity
             )
 
-    topFive = PrettyTable([   "City",
-                            "Count"
-                        ])
+    # Se crea la tabla de salida del TOP 5 ciudades con mas casos.
+
+    topFive = PrettyTable(
+                            [   
+                                "City",
+                                "Count"
+                            ]
+                        )
                         
-    topFive.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 1)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 1)["nCases"]
-                    ])
+    topFive.add_row(
+                        [
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        1)["city"],
 
-    topFive.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 2)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 2)["nCases"]
-                    ])
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        1)["nCases"]
+                        ]
+                    )
 
-    topFive.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 3)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 3)["nCases"]
-                    ])
+    topFive.add_row(
+                        [
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        2)["city"],
 
-    topFive.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 4)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 4)["nCases"]
-                    ])
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        2)["nCases"]
+                        ]
+                    )
 
-    topFive.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 5)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "top5NCases")), 5)["nCases"]
-                    ])
+    topFive.add_row(
+                        [
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        3)["city"],
 
-    firstAndLastThree = PrettyTable([   "Datetime",
-                                        "City",
-                                        "State",
-                                        "Country",
-                                        "Shape",
-                                        "Duration (seconds)"
-                                    ])
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        3)["nCases"]
+                        ]
+                    )
 
-    firstAndLastThree.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 1)["datetime"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 1)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 1)["state"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 1)["country"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 1)["shape"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 1)["duration (seconds)"],
-                    ])
+    topFive.add_row(
+                        [
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        4)["city"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 2)["datetime"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 2)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 2)["state"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 2)["country"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 2)["shape"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 2)["duration (seconds)"],
-                    ])
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        4)["nCases"]
+                        ]
+                    )
 
-    firstAndLastThree.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 3)["datetime"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 3)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 3)["state"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 3)["country"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 3)["shape"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 3)["duration (seconds)"],
-                    ])
+    topFive.add_row(
+                        [
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        5)["city"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 4)["datetime"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 4)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 4)["state"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 4)["country"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 4)["shape"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 4)["duration (seconds)"],
-                    ])
+                            lt.getElement(
+                                            me.getValue(
+                                                        mp.get(
+                                                                outMap,
+                                                                "top5NCases"
+                                                            )
+                                                        ), 
+                                        5)["nCases"]
+                        ]
+                    )
 
-    firstAndLastThree.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 5)["datetime"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 5)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 5)["state"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 5)["country"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 5)["shape"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 5)["duration (seconds)"],
-                    ])
+    # Se crea la tabla de salida para los primeros y ultimos tres 
+    # avistamientos.
 
-    firstAndLastThree.add_row([
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 6)["datetime"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 6)["city"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 6)["state"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 6)["country"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 6)["shape"],
-                        lt.getElement(me.getValue(mp.get(outMap, "recentAndOlderCasesByCity")), 6)["duration (seconds)"],
-                    ])
+    firstAndLastThree = PrettyTable(
+                                        [   
+                                            "Datetime",
+                                            "City",
+                                            "State",
+                                            "Country",
+                                            "Shape",
+                                            "Duration (seconds)"
+                                        ]
+                                    )
 
-    answer = f"\n================ Req No. 1 Inputs ================\n\nUFO Sightings in the city of: {ciity}.\n\n================ Req No. 1 answer ================\n\nThere are {me.getValue(mp.get(outMap, 'totalCities'))} different cities with UFO sightings.\n\n{topFive}\n\n There are {me.getValue(mp.get(outMap, 'nCasesByCity'))} sightings at the: {ciity} city.\n\nThe first 3 and last 3 UFO sightings are:\n\n{firstAndLastThree}\n"
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    1
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    1
+                                                )["city"],
+                        
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    1
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    1
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    1
+                                                )["shape"],
+                                            
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    1
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    2
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    2
+                                                )["city"],
+                        
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    2
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    2
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    2
+                                                )["shape"],
+                                            
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    2
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    3
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    3
+                                                )["city"],
+                        
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    3
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    3
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    3
+                                                )["shape"],
+                                            
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    3
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    4
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    4
+                                                )["city"],
+                        
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    4
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    4
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    4
+                                                )["shape"],
+                                            
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    4
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    5
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    5
+                                                )["city"],
+                        
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    5
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    5
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    5
+                                                )["shape"],
+                                            
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    5
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    6
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    6
+                                                )["city"],
+                        
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    6
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    6
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    6
+                                                )["shape"],
+                                            
+                                    lt.getElement(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        outMap,
+                                                                        "recentAndOlderCasesByCity"
+                                                                    )
+                                                                ), 
+                                                    6
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+
+    # Se crea la salida total.
+    answer = f"\n================ Req No. 1 Inputs ================\n\nUFO Sightings in the city of: {ciity}.\n\n================ Req No. 1 answer ================\n\nThere are {me.getValue(mp.get(outMap, 'totalCities'))} different cities with UFO sightings.\n\n{topFive}\n\n There are {me.getValue(mp.get(outMap, 'nCasesByCity'))} sightings at the: {ciity} city.\n\nThe first 3 and last 3 UFO sightings are:\n\n{firstAndLastThree}\n\nThe function took {elapsed_time_mseg} milliseconds to execute."
 
     return answer
 
@@ -385,150 +1213,597 @@ def getCasesBetweeenSeconds(analyzer, beginSeconds, endSeconds):
 
     """
 
-    # Se extrae el mapa de avistamientos
-    cases = me.getValue(mp.get(analyzer, "cases"))
+    start_time = time.process_time()
 
-    # Se guarda en una lista todas las ciudades
-    secondsKeys = lt.newList("ARRAY_LIST")
+    # Se extrae el mapa de avistamientos.
+    cases = me.getValue(
+                        mp.get(
+                                analyzer, 
+                                "cases"
+                            )
+                        )
+
+    # Se guarda en una lista todos los segundos.
+    secondsKeys = lt.newList(
+                                "ARRAY_LIST"
+                            )
     
-    # Se revisan las ciudades de cada avistamiento, si no se ha agregado la ciudad al mapa que indica
-    # los avistamientos por ciudad, se grega la ciudad con una lista vacia como valor
+    # Se revisan los segundos de cada avistamiento, si no se han agregado
+    # los segundos al mapa que indica los avistamientos por segundos, se
+    # agregan los segundos con una lista vacia como valor.
     for i in lt.iterator(cases):
-        if om.contains(me.getValue(mp.get(analyzer, "casesBySeconds")), i["duration (seconds)"]) == False:
-            lt.addLast(secondsKeys, i["duration (seconds)"])
-            om.put(me.getValue(mp.get(analyzer, "casesBySeconds")), i["duration (seconds)"], lt.newList("ARRAY_LIST"))
 
+        if om.contains(
+                        me.getValue(
+                                    mp.get(
+                                            analyzer,  
+                                            "casesBySeconds"
+                                            )
+                                    ),
+                        i["duration (seconds)"]
+                    ) == False:
+
+            lt.addLast(
+                        secondsKeys,
+                        i["duration (seconds)"]
+                    )
+            
+            om.put(
+                    me.getValue(
+                                mp.get(
+                                        analyzer,
+                                        "casesBySeconds"
+                                        )
+                                ), 
+                    i["duration (seconds)"],
+                    lt.newList("ARRAY_LIST")
+                )
+
+    # Se ordenan los segundos.
     secondsKeys = sortSeconds(secondsKeys)
 
-    secondsKeysInRange = lt.newList("ARRAY_LIST")
+    # Se crea una lista para guarda unicamente los segundos que se
+    # encuentran dentro del rango ingresado por el ususario.
+    secondsKeysInRange = lt.newList(
+                                    "ARRAY_LIST"
+                                )
     
+    # Se agregan los segundos a la lista creada anteriormente.
     for i in lt.iterator(secondsKeys):
         if float(i) >= float(beginSeconds) and float(i) <= float(endSeconds):
-            lt.addLast(secondsKeysInRange, i)
+            lt.addLast(
+                        secondsKeysInRange, 
+                        i
+                    )
 
-    # Se añade cada caso de avistamiento a lista que corresponde a los casos de avistamientos de cada
-    # ciudadas anteriormente
+    # Se añade cada caso de avistamiento a lista que corresponde
+    # a los casos de avistamientos de cada llave de segundos.
     for i in lt.iterator(cases):
-        lt.addLast(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), i["duration (seconds)"])), i)
 
-    # Se eliminan los avistamientos duplicados en cada ciudad
+        lt.addLast(
+                    me.getValue(
+                                om.get(
+                                        me.getValue(
+                                                    mp.get(
+                                                            analyzer,
+                                                            "casesBySeconds"
+                                                        )
+                                                ), 
+                                        i["duration (seconds)"]
+                                    )
+                            ),
+                    i
+                )
+
+    # Se eliminan los avistamientos duplicados en cada llave de
+    # segundos.
     for i in lt.iterator(secondsKeys):
+
         pos = 2
-        while pos <= lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), i))):
-            lt.deleteElement(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), i)), pos)
+        while pos <= lt.size(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        analyzer,
+                                                                        "casesBySeconds"
+                                                                    )
+                                                                ),
+                                                    i
+                                                )
+                                            )
+                        ):
+
+            lt.deleteElement(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        analyzer,
+                                                                        "casesBySeconds"
+                                                                    )
+                                                            ), 
+                                                    i
+                                                )
+                                        ), 
+                                pos
+                            )
             pos += 2
             pos -=1
-        om.put(me.getValue(mp.get(analyzer, "casesBySeconds")), i, me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), i)))
 
-    casesInRange = lt.newList("ARRAY_LIST")
+        om.put(
+                me.getValue(
+                            mp.get(
+                                    analyzer,
+                                    "casesBySeconds"
+                                )
+                            ), 
+                i, 
+                me.getValue(
+                            om.get(
+                                    me.getValue(
+                                                mp.get(
+                                                        analyzer, 
+                                                        "casesBySeconds"
+                                                    )
+                                                ), 
+                                    i
+                                )
+                        )
+            )
 
+    # Se crea una nuva lista para agregar unicamente los segundos que se
+    # encuentran en el rango de segundos dados por el ususario.
+    casesInRange = lt.newList(
+                                "ARRAY_LIST"
+                            )
+
+    # Se añaden los elementos a la lista creada anteriormente.
     for i in lt.iterator(secondsKeysInRange):
-        lt.addLast(casesInRange, om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), i))
+        lt.addLast(
+                    casesInRange, 
+                    om.get(
+                            me.getValue(
+                                        mp.get(
+                                                analyzer, 
+                                                "casesBySeconds"
+                                            )
+                                        ), 
+                        i
+                    )
+                )
 
-    topFiveDurations = PrettyTable([   "Duration (seconds)",
-                            "Count"
-                        ])
+    topFiveDurations = PrettyTable(
+                                    [   "Duration (seconds)",
+                                        "Count"
+                                    ]
+                                )
                         
-    topFiveDurations.add_row([
-                        lt.getElement(secondsKeys, lt.size(secondsKeys)),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), lt.getElement(secondsKeys, lt.size(secondsKeys)))))
-                    ])
+    topFiveDurations.add_row(
+                                [
+                                    lt.getElement(
+                                                    secondsKeys,
+                                                    lt.size(secondsKeys)
+                                                ),
+                                    lt.size(
+                                            me.getValue(
+                                                        om.get(
+                                                                me.getValue(
+                                                                            mp.get(
+                                                                                    analyzer,
+                                                                                    "casesBySeconds"
+                                                                                )
+                                                                        ), 
+                                                                lt.getElement(
+                                                                                secondsKeys, 
+                                                                                lt.size(secondsKeys)
+                                                                            )
+                                                            )
+                                                    )
+                                        )
+                                ]
+                            )
 
-    topFiveDurations.add_row([
-                        lt.getElement(secondsKeys, lt.size(secondsKeys)-1),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), lt.getElement(secondsKeys, lt.size(secondsKeys)-1))))
-                    ])
+    topFiveDurations.add_row(
+                                [
+                                    lt.getElement(
+                                                    secondsKeys,
+                                                    lt.size(secondsKeys)-1
+                                                ),
+                                    lt.size(
+                                            me.getValue(
+                                                        om.get(
+                                                                me.getValue(
+                                                                            mp.get(
+                                                                                    analyzer,
+                                                                                    "casesBySeconds"
+                                                                                )
+                                                                        ), 
+                                                                lt.getElement(
+                                                                                secondsKeys, 
+                                                                                lt.size(secondsKeys)-1
+                                                                            )
+                                                            )
+                                                    )
+                                        )
+                                ]
+                            )
 
-    topFiveDurations.add_row([
-                        lt.getElement(secondsKeys, lt.size(secondsKeys)-2),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), lt.getElement(secondsKeys, lt.size(secondsKeys)-2))))
-                    ])
+    topFiveDurations.add_row(
+                                [
+                                    lt.getElement(
+                                                    secondsKeys,
+                                                    lt.size(secondsKeys)-2
+                                                ),
+                                    lt.size(
+                                            me.getValue(
+                                                        om.get(
+                                                                me.getValue(
+                                                                            mp.get(
+                                                                                    analyzer,
+                                                                                    "casesBySeconds"
+                                                                                )
+                                                                        ), 
+                                                                lt.getElement(
+                                                                                secondsKeys, 
+                                                                                lt.size(secondsKeys)-2
+                                                                            )
+                                                            )
+                                                    )
+                                        )
+                                ]
+                            )
 
-    topFiveDurations.add_row([
-                        lt.getElement(secondsKeys, lt.size(secondsKeys)-3),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), lt.getElement(secondsKeys, lt.size(secondsKeys)-3))))
-                    ])
+    topFiveDurations.add_row(
+                                [
+                                    lt.getElement(
+                                                    secondsKeys,
+                                                    lt.size(secondsKeys)-3
+                                                ),
+                                    lt.size(
+                                            me.getValue(
+                                                        om.get(
+                                                                me.getValue(
+                                                                            mp.get(
+                                                                                    analyzer,
+                                                                                    "casesBySeconds"
+                                                                                )
+                                                                        ), 
+                                                                lt.getElement(
+                                                                                secondsKeys, 
+                                                                                lt.size(secondsKeys)-3
+                                                                            )
+                                                            )
+                                                    )
+                                        )
+                                ]
+                            )
 
-    topFiveDurations.add_row([
-                        lt.getElement(secondsKeys, lt.size(secondsKeys)-4),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), lt.getElement(secondsKeys, lt.size(secondsKeys)-4))))
-                    ])
+    topFiveDurations.add_row(
+                                [
+                                    lt.getElement(
+                                                    secondsKeys,
+                                                    lt.size(secondsKeys)-4
+                                                ),
+                                    lt.size(
+                                            me.getValue(
+                                                        om.get(
+                                                                me.getValue(
+                                                                            mp.get(
+                                                                                    analyzer,
+                                                                                    "casesBySeconds"
+                                                                                )
+                                                                        ), 
+                                                                lt.getElement(
+                                                                                secondsKeys, 
+                                                                                lt.size(secondsKeys)-4
+                                                                            )
+                                                            )
+                                                    )
+                                        )
+                                ]
+                            )
 
+    # Se crea una variable para contar la cantidad de casos en el rango
+    # dado.
     nCases = 0
-    onlyCasesInRange = lt.newList("ARRAY_LIST")
+
+    # Se crea una nuva lista para agregar unicamente los casos que se
+    # encuentran en el rango de segundos dados por el ususario.
+    onlyCasesInRange = lt.newList(
+                                    "ARRAY_LIST"
+                                )
 
     for i in lt.iterator(secondsKeysInRange):
-        nCases += lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), i)))
-        for j in lt.iterator(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), i))):
-            lt.addLast(onlyCasesInRange, j)
 
+        nCases += lt.size(
+                            me.getValue(
+                                        om.get(
+                                                me.getValue(
+                                                            mp.get(
+                                                                    analyzer,
+                                                                    "casesBySeconds"
+                                                                )
+                                                        ), 
+                                                i
+                                            )
+                                        )
+                        )
+
+        for j in lt.iterator(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        analyzer,
+                                                                        "casesBySeconds"
+                                                                    )
+                                                            ), 
+                                                    i
+                                                )
+                                        )
+                            ):
+
+            lt.addLast(
+                        onlyCasesInRange, 
+                        j
+                    )
+
+    # Se ordenan los casos por su fecha de ocurrencia.
     onlyCasesInRange = sortDates(onlyCasesInRange)
 
-    firstAndLastThree = PrettyTable([   "Datetime",
-                                        "City",
-                                        "State",
-                                        "Country",
-                                        "Shape",
-                                        "Duration (seconds)"
-                                    ])
+    # Se crea la tabla para retornar los primeros y ultimos tres casos.
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, 1)["datetime"],
-                        lt.getElement(onlyCasesInRange, 1)["city"],
-                        lt.getElement(onlyCasesInRange, 1)["state"],
-                        lt.getElement(onlyCasesInRange, 1)["country"],
-                        lt.getElement(onlyCasesInRange, 1)["shape"],
-                        lt.getElement(onlyCasesInRange, 1)["duration (seconds)"]
-                    ])
+    firstAndLastThree = PrettyTable(
+                                        [   "Datetime",
+                                            "City",
+                                            "State",
+                                            "Country",
+                                            "Shape",
+                                            "Duration (seconds)"
+                                        ]
+                                    )
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, 2)["datetime"],
-                        lt.getElement(onlyCasesInRange, 2)["city"],
-                        lt.getElement(onlyCasesInRange, 2)["state"],
-                        lt.getElement(onlyCasesInRange, 2)["country"],
-                        lt.getElement(onlyCasesInRange, 2)["shape"],
-                        lt.getElement(onlyCasesInRange, 2)["duration (seconds)"]
-                    ])
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    1
+                                                )["datetime"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, 3)["datetime"],
-                        lt.getElement(onlyCasesInRange, 3)["city"],
-                        lt.getElement(onlyCasesInRange, 3)["state"],
-                        lt.getElement(onlyCasesInRange, 3)["country"],
-                        lt.getElement(onlyCasesInRange, 3)["shape"],
-                        lt.getElement(onlyCasesInRange, 3)["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["city"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["datetime"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["city"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["state"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["country"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["shape"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["state"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["datetime"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["city"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["state"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["country"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["shape"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["country"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["datetime"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["city"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["state"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["country"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["shape"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["shape"],
 
-    answer = f"\n================ Req No. 2 Inputs ================\n\nUFO Sightings between {beginSeconds} and {endSeconds} seconds.\n\n================ Req No. 2 answer ================\n\nThere are {lt.size(secondsKeys)} different UFO sightings durations.\n\nThe TOP 5 durations with UFO sightings are:\n\n{topFiveDurations}\n\nThere are {nCases} sightings between: {beginSeconds} and {endSeconds} duration.\n\nThe first 3 and last 3 UFO sightings in the duration time are:\n\n{firstAndLastThree}\n"
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["duration (seconds)"]
+                                ]
+                            )
 
-    #x = om.get(me.getValue(mp.get(analyzer, "casesBySeconds")), "90.0")
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    2
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    3
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["state"],
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["shape"],
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["duration (seconds)"]
+                                ]
+                            )
+    
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["state"],
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["shape"],
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["state"],
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["shape"],
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["duration (seconds)"]
+                                ]
+                            )
+    
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+
+    # Se crea la salida total.
+    answer = f"\n================ Req No. 2 Inputs ================\n\nUFO Sightings between {beginSeconds} and {endSeconds} seconds.\n\n================ Req No. 2 answer ================\n\nThere are {lt.size(secondsKeys)} different UFO sightings durations.\n\nThe TOP 5 durations with UFO sightings are:\n\n{topFiveDurations}\n\nThere are {nCases} sightings between: {beginSeconds} and {endSeconds} duration.\n\nThe first 3 and last 3 UFO sightings in the duration time are:\n\n{firstAndLastThree}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
+
 
     return answer
 
@@ -542,187 +1817,679 @@ def getCasesBetweeenHours(analyzer, beginHour, endHour):
 
     """
 
-    # Se extrae el mapa de avistamientos
-    cases = me.getValue(mp.get(analyzer, "cases"))
+    start_time = time.process_time()
 
-    # Se guarda en una lista todas las ciudades
-    hoursKeys = lt.newList("ARRAY_LIST")
+    # Se extrae el mapa de avistamientos.
+    cases = me.getValue(
+                        mp.get(
+                                analyzer,
+                                "cases"
+                            )
+                    )
+
+    # Se crea una lista para guardar todas las horas.
+    hoursKeys = lt.newList(
+                            "ARRAY_LIST"
+                        )
     
-    # Se revisan las ciudades de cada avistamiento, si no se ha agregado la ciudad al mapa que indica
-    # los avistamientos por ciudad, se grega la ciudad con una lista vacia como valor
+    # Se revisan las horas de cada avistamiento, si no se ha
+    # agregado la hora al mapa que indica los avistamientos por hora,
+    # se grega la hora con una lista vacia como valor.
     for i in lt.iterator(cases):
-        if om.contains(me.getValue(mp.get(analyzer, "casesByHour")), str(dateToHour(i["datetime"]))) == False:
-            om.put(me.getValue(mp.get(analyzer, "casesByHour")), str(dateToHour(i["datetime"])), lt.newList("ARRAY_LIST"))
-            if lt.isPresent(hoursKeys, str(dateToHour(i["datetime"]))) == 0:
-                lt.addLast(hoursKeys, str(dateToHour(i["datetime"])))
+        if om.contains(
+                        me.getValue(
+                                    mp.get(
+                                            analyzer,
+                                            "casesByHour"
+                                        )
+                                ), 
+                        str(
+                            dateToHour(
+                                i["datetime"]
+                                )
+                            )
+                    ) == False:
 
+            om.put(
+                    me.getValue(
+                                mp.get(
+                                        analyzer,
+                                        "casesByHour"
+                                    )
+                                ),
+                                str(
+                                    dateToHour(
+                                                i["datetime"]
+                                            )
+                                ), 
+                                lt.newList(
+                                            "ARRAY_LIST"
+                                        )
+                )
+            if lt.isPresent(
+                            hoursKeys,
+                            str(
+                                dateToHour(
+                                            i["datetime"]
+                                        )
+                            )
+                        ) == 0:
+                lt.addLast(
+                            hoursKeys,
+                            str(
+                                dateToHour(
+                                            i["datetime"]
+                                        )
+                            )
+                        )
+
+    # Se ordena la lista de horas
     hoursKeys = sortHours(hoursKeys)
 
-    # Se añade cada caso de avistamiento a lista que corresponde a los casos de avistamientos de cada
-    # ciudadas anteriormente
+    # Se añade cada caso de avistamiento a lista que le corresponde
+    # segun su hora.
     for i in lt.iterator(cases):
-        lt.addLast(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), str(dateToHour(i["datetime"])))), i)
+        lt.addLast(
+                    me.getValue(
+                                om.get(
+                                        me.getValue(
+                                                    mp.get(
+                                                            analyzer,
+                                                            "casesByHour"
+                                                        )
+                                                ), 
+                                        str(
+                                            dateToHour(
+                                                        i["datetime"]
+                                                    )
+                                        )
+                                    )
+                            ), 
+                    i
+                )
 
-    # Se eliminan los avistamientos duplicados en cada ciudad
+    # Se eliminan los avistamientos duplicados en cada hora.
     for i in lt.iterator(hoursKeys):
         pos = 2
-        while pos <= lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), i))):
-            lt.deleteElement(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), i)), pos)
+        while pos <= lt.size(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        analyzer,
+                                                                        "casesByHour"
+                                                                    )
+                                                            ), 
+                                                    
+                                                i
+                                            )
+                                        )
+                        ):
+
+            lt.deleteElement(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        analyzer,
+                                                                        "casesByHour"
+                                                                    )
+                                                            ), 
+                                                    i
+                                                )
+                                        ), 
+                            pos
+                        )
             pos += 2
             pos -=1
-        om.put(me.getValue(mp.get(analyzer, "casesByHour")), i, me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), i)))
 
-    #a = me.getValue(mp.get(analyzer, "casesByHour"))
+        om.put(
+                me.getValue(   
+                            mp.get(
+                                    analyzer,
+                                    "casesByHour"
+                                )
+                        ), 
+                i, 
+                me.getValue(
+                            om.get(
+                                    me.getValue(
+                                                mp.get(
+                                                        analyzer, 
+                                                        "casesByHour"
+                                                    )
+                                            ), 
+                                    i
+                                )
+                        )
+            )
 
+    # Se crea una lista vacia para insertar las horas que se encuentran
+    # dentro del rango ingresado por el usuario.
     hourKeysInRange = lt.newList("ARRAY_LIST")
     
+    # Se añaden las horas a la lista creada anteriormente.
     for i in lt.iterator(hoursKeys):
         if toHour(i) >= toHour(beginHour) and toHour(i) <= toHour(endHour):
-            lt.addLast(hourKeysInRange, i)
+            lt.addLast(
+                        hourKeysInRange, 
+                        i
+                    )
 
+    # Se crea una variable para contar el numero de casos en el rango de
+    # horas ingresado por el usuario. 
     nCases = 0
-    onlyCasesInRange = lt.newList("ARRAY_LIST")
 
+    # Se crea una lista vacia para insertar unicamente los casos que se
+    # se encuentran en el rango de horas ingresado por el usuario.
+    onlyCasesInRange = lt.newList(
+                                    "ARRAY_LIST"
+                                )
+
+    # Se añade la informacion a la lista creada anteriormente.
     for i in lt.iterator(hourKeysInRange):
-        nCases += lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), i)))
-        for j in lt.iterator(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), i))):
-            lt.addLast(onlyCasesInRange, j)
+        nCases += lt.size(
+                            me.getValue(
+                                        om.get(
+                                                me.getValue(
+                                                            mp.get(
+                                                                    analyzer,
+                                                                    "casesByHour"
+                                                                )
+                                                        ), 
+                                                i
+                                            )
+                                    )
+                    )
 
+        for j in lt.iterator(
+                                me.getValue(
+                                            om.get(
+                                                    me.getValue(
+                                                                mp.get(
+                                                                        analyzer,
+                                                                        "casesByHour"
+                                                                    )
+                                                            ), 
+                                                    i
+                                                )
+                                        )
+                        ):
+
+            lt.addLast(
+                        onlyCasesInRange,
+                        j
+                    )
+
+    # Se ordenan los casos añadidos a la lista por fecha.
     onlyCasesInRange = sortDates(onlyCasesInRange)
 
-    latestTimes = PrettyTable([   "Time",
-                            "Count"
-                        ])
+    # Se crea la tabla para retornar los avistamientos a una hora mas
+    # tardia.
+    latestTimes = PrettyTable(
+                                [   
+                                    "Time",
+                                    "Count"
+                                ]
+                            )
                         
-    latestTimes.add_row([
-                        lt.getElement(hoursKeys, lt.size(hoursKeys)),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), lt.getElement(hoursKeys, lt.size(hoursKeys)))))
-                    ])
+    latestTimes.add_row(
+                        [
+                            lt.getElement(
+                                            hoursKeys,
+                                            lt.size(
+                                                    hoursKeys
+                                                )
+                                        ),
 
-    latestTimes.add_row([
-                        lt.getElement(hoursKeys, lt.size(hoursKeys)-1),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), lt.getElement(hoursKeys, lt.size(hoursKeys)-1))))
-                    ])
+                            lt.size(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            analyzer,
+                                                                            "casesByHour"
+                                                                        )
+                                                                ), 
+                                                        lt.getElement(
+                                                                        hoursKeys,
+                                                                        lt.size(
+                                                                                hoursKeys
+                                                                            )
+                                                                    )
+                                                    )
+                                            )
+                                )
+                        ]
+                    )
 
-    latestTimes.add_row([
-                        lt.getElement(hoursKeys, lt.size(hoursKeys)-2),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), lt.getElement(hoursKeys, lt.size(hoursKeys)-2))))
-                    ])
+    latestTimes.add_row(
+                        [
+                            lt.getElement(
+                                            hoursKeys,
+                                            lt.size(
+                                                    hoursKeys
+                                                )-1
+                                        ),
 
-    latestTimes.add_row([
-                        lt.getElement(hoursKeys, lt.size(hoursKeys)-3),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), lt.getElement(hoursKeys, lt.size(hoursKeys)-3))))
-                    ])
+                            lt.size(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            analyzer,
+                                                                            "casesByHour"
+                                                                        )
+                                                                ), 
+                                                        lt.getElement(
+                                                                        hoursKeys,
+                                                                        lt.size(
+                                                                                hoursKeys
+                                                                            )-1
+                                                                    )
+                                                    )
+                                            )
+                                )
+                        ]
+                    )
 
-    latestTimes.add_row([
-                        lt.getElement(hoursKeys, lt.size(hoursKeys)-4),
-                        lt.size(me.getValue(om.get(me.getValue(mp.get(analyzer, "casesByHour")), lt.getElement(hoursKeys, lt.size(hoursKeys)-4))))
-                    ])
+    latestTimes.add_row(
+                        [
+                            lt.getElement(
+                                            hoursKeys,
+                                            lt.size(
+                                                    hoursKeys
+                                                )-2
+                                        ),
 
-    firstAndLastThree = PrettyTable([   "Datetime",
+                            lt.size(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            analyzer,
+                                                                            "casesByHour"
+                                                                        )
+                                                                ), 
+                                                        lt.getElement(
+                                                                        hoursKeys,
+                                                                        lt.size(
+                                                                                hoursKeys
+                                                                            )-2
+                                                                    )
+                                                    )
+                                            )
+                                )
+                        ]
+                    )
+
+    latestTimes.add_row(
+                        [
+                            lt.getElement(
+                                            hoursKeys,
+                                            lt.size(
+                                                    hoursKeys
+                                                )-3
+                                        ),
+
+                            lt.size(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            analyzer,
+                                                                            "casesByHour"
+                                                                        )
+                                                                ), 
+                                                        lt.getElement(
+                                                                        hoursKeys,
+                                                                        lt.size(
+                                                                                hoursKeys
+                                                                            )-3
+                                                                    )
+                                                    )
+                                            )
+                                )
+                        ]
+                    )
+
+    latestTimes.add_row(
+                        [
+                            lt.getElement(
+                                            hoursKeys,
+                                            lt.size(
+                                                    hoursKeys
+                                                )-4
+                                        ),
+
+                            lt.size(
+                                    me.getValue(
+                                                om.get(
+                                                        me.getValue(
+                                                                    mp.get(
+                                                                            analyzer,
+                                                                            "casesByHour"
+                                                                        )
+                                                                ), 
+                                                        lt.getElement(
+                                                                        hoursKeys,
+                                                                        lt.size(
+                                                                                hoursKeys
+                                                                            )-4
+                                                                    )
+                                                    )
+                                            )
+                                )
+                        ]
+                    )
+
+    firstAndLastThree = PrettyTable(
+                                    [   
+                                        "Datetime",
                                         "City",
                                         "State",
                                         "Country",
                                         "Shape",
                                         "Duration (seconds)"
-                                    ])
+                                    ]
+                                )
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, 1)["datetime"],
-                        lt.getElement(onlyCasesInRange, 1)["city"],
-                        lt.getElement(onlyCasesInRange, 1)["state"],
-                        lt.getElement(onlyCasesInRange, 1)["country"],
-                        lt.getElement(onlyCasesInRange, 1)["shape"],
-                        lt.getElement(onlyCasesInRange, 1)["duration (seconds)"]
-                    ])
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["datetime"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, 2)["datetime"],
-                        lt.getElement(onlyCasesInRange, 2)["city"],
-                        lt.getElement(onlyCasesInRange, 2)["state"],
-                        lt.getElement(onlyCasesInRange, 2)["country"],
-                        lt.getElement(onlyCasesInRange, 2)["shape"],
-                        lt.getElement(onlyCasesInRange, 2)["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["city"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, 3)["datetime"],
-                        lt.getElement(onlyCasesInRange, 3)["city"],
-                        lt.getElement(onlyCasesInRange, 3)["state"],
-                        lt.getElement(onlyCasesInRange, 3)["country"],
-                        lt.getElement(onlyCasesInRange, 3)["shape"],
-                        lt.getElement(onlyCasesInRange, 3)["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["state"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["datetime"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["city"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["state"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["country"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["shape"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-2)["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["country"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["datetime"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["city"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["state"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["country"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["shape"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange)-1)["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    1
+                                                )["shape"],
 
-    firstAndLastThree.add_row([
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["datetime"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["city"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["state"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["country"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["shape"],
-                        lt.getElement(onlyCasesInRange, lt.size(onlyCasesInRange))["duration (seconds)"]
-                    ])
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    1
+                                                )["duration (seconds)"]
+                                ]
+                            )
 
-    answer = f"\n================ Req No. 3 Inputs ================\n\nUFO Sightings between {beginHour} and {endHour} seconds.\n\n================ Req No. 3 answer ================\n\nThere are {lt.size(hoursKeys)} different UFO sightings times [HH:MM:SS].\n\nThe 5 latest times for UFO sightings are:\n\n{latestTimes}\n\nThere are {nCases} sightings between: {beginHour} and {endHour}.\n\nThe first 3 and last 3 UFO sightings in this time are:\n\n{firstAndLastThree}\n"
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["datetime"],
+            
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["city"],
+            
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["state"],
+            
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["country"],
+                                    
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    2
+                                                )["shape"],
+            
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    2
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["datetime"],
+            
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["city"],
+            
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["state"],
+            
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["country"],
+                                    
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    3
+                                                )["shape"],
+            
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    3
+                                                )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-2
+                                                    )["duration (seconds)"]
+                                ]
+                            )
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )-1
+                                                    )["duration (seconds)"]
+                                ]
+                            )                         
+
+    firstAndLastThree.add_row(
+                                [
+                                    lt.getElement(
+                                                    onlyCasesInRange, 
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    onlyCasesInRange,
+                                                    lt.size(
+                                                            onlyCasesInRange
+                                                        )
+                                                    )["duration (seconds)"]
+                                ]
+                            )
+
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+
+    # Se crea la salida total.
+    answer = f"\n================ Req No. 3 Inputs ================\n\nUFO Sightings between {beginHour} and {endHour} seconds.\n\n================ Req No. 3 answer ================\n\nThere are {lt.size(hoursKeys)} different UFO sightings times [HH:MM:SS].\n\nThe 5 latest times for UFO sightings are:\n\n{latestTimes}\n\nThere are {nCases} sightings between: {beginHour} and {endHour}.\n\nThe first 3 and last 3 UFO sightings in this time are:\n\n{firstAndLastThree}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
 
     return answer
-
-
-
-
 
 #•••••••••••••••••••••••••••••••••••••••••
 # Funciones para agregar informacion al catalogo
 #•••••••••••••••••••••••••••••••••••••••••
 
 def addCase(analyzer, case):
+
     """
+
+        Agrega un caso de avistamiento la lista de casos que se encuentra
+        en el analyzer.
+
     """
+
     lt.addLast(me.getValue(mp.get(analyzer, "cases")), case)
     return analyzer
-
-
-
-
-
-
-#•••••••••••••••••••••••••••••••••••••••••
-# Funciones para creacion de datos
-#•••••••••••••••••••••••••••••••••••••••••
-
-
-
-
 
 #•••••••••••••••••••••••••••••••••••••••••
 # Funciones adicionales
 #•••••••••••••••••••••••••••••••••••••••••
 
 def getCasesSize(analyzer):
+
+    """
+
+        Obtiene el tamaño de la lista donde se encuentran los
+        avistamientos en el analyzer.
+
+    """
+
     return lt.size(me.getValue(mp.get(analyzer, "cases")))
 
 def toDate(date:str):
+
+    """
+
+        Convirte un string con frato de ficha a tipo date.
+
+    """
     return datetime.strptime(date, '%Y-%m-%d %H:%M:%f')
 
 def firstAndLastFiveCases(analyzer):
+
+    """
+
+        Crea una tabla y la retorna con los primeros y ultimos 5 casos
+        de avistamientos y su informacion que se encuentren en una lista.
+
+    """
 
     list = me.getValue(mp.get(analyzer, "cases"))
 
@@ -843,12 +2610,35 @@ def firstAndLastFiveCases(analyzer):
     return table
 
 def dateToHour(date):
+
+    """
+
+        Extrae la hora de un string co formato de fecha y hora y lo
+        convierte en formato time.
+
+    """
+
     return datetime.strptime(date[11:len(date)+1], "%H:%M:%f").time()
 
 def toHour(hour):
+
+    """
+
+        Convierte un string con formato de hora a un objeto
+        de tipo time.
+
+    """
+
     return datetime.strptime(hour, "%H:%M:%f").time()
 
 def createEmptyCase():
+
+    """
+
+        Crea un caso de avistamiento sin infomacion.
+
+    """
+
     return {
             "datetime": "Not Available",
             "city": "Not Available",
@@ -864,22 +2654,46 @@ def createEmptyCase():
 #•••••••••••••••••••••••••••••••••••••••••
 
 def compareDates(case1, case2):
+
+    """
+
+        Compara dos fechas.
+
+    """
+
     return(toDate(case1["datetime"]) < toDate(case2["datetime"]))
 
 def compareNumbers(case1, case2):
+
+    """
+
+        Compara dos numeros.
+
+    """
+
     return(case1["nCases"] > case2["nCases"])
 
 def compareSeconds(time1, time2):
+
+    """
+
+        Compara dos segundos.
+
+    """
+
     return(float(time1) < float(time2))
 
 def compareHours(time1, time2):
+
+    """
+
+        Compara dos horas.
+
+    """
+
     return (datetime.strptime(time1, "%H:%M:%f").time() < datetime.strptime(time2, "%H:%M:%f").time())
 
 #----------------------------------------
-
-
-
-
 
 #•••••••••••••••••••••••••••••••••••••••••
 # Funciones de ordenamiento
@@ -887,20 +2701,53 @@ def compareHours(time1, time2):
 
 def sortByDate(analyzer):
 
+    """
+
+        Ordena una lista por la fecha de sus elementos.
+
+    """
+
     list = me.getValue(mp.get(analyzer, "cases"))
     list = sa.sort(list, compareDates)
 
     return list
 
 def sortByNCases(data):
+
+    """
+
+        Ordena una lista por la cantidad de casos.
+
+    """
+
     return sa.sort(data, compareNumbers)
 
 def sortSeconds(data):
-    data = sa.sort(data, compareSeconds)
-    return data
+
+    """
+
+        Ordena una lista de segundos.
+
+    """
+
+    return sa.sort(data, compareSeconds)
 
 def sortDates(data):
+
+    """
+
+        Ordena una lista de fechas.
+
+    """
+
     return sa.sort(data, compareDates)
 
 def sortHours(data):
+
+    """
+
+        Ordena una lista de horas.
+
+    """
+
     return sa.sort(data, compareHours)

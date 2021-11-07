@@ -31,7 +31,7 @@ from DISClib.DataStructures import mapentry as me
 from datetime import datetime
 from prettytable import PrettyTable
 
-ufosFile = 'UFOS//UFOS-utf8-small.csv'
+ufosFile = 'UFOS//UFOS-utf8-large.csv'
 cont = None
 
 
