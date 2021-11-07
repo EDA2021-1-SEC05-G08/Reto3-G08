@@ -96,7 +96,8 @@ def getCasesBetweeenHours(analyzer, beginHour, endHour):
 
 #----------------------------------------
 
-
+def getCountsightingsrangedates (analyzer, limiteInferior, LimiteMayor):
+    return model.Countsightingsrangedates
 
 # Funciones de ordenamiento
 

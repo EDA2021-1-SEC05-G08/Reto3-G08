@@ -114,6 +114,7 @@ def newAnalyzer():
                         comparefunction=None
                     )
             )
+    mp.put()
 
     return analyzer
 
