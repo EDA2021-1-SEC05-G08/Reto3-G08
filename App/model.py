@@ -139,7 +139,7 @@ def getCasesByCity(analyzer, ciity):
 
     # Se incializa un nuevo mapa
     outMap = mp.newMap(
-           2,
+           5,
            maptype = "CHAINING",
            loadfactor = 4.0,
            comparefunction = None
@@ -203,11 +203,31 @@ def getCasesByCity(analyzer, ciity):
 
     #Se crea una nueva lista para almacenar las 5 ciudades con mayor numero de avistamientos
     topCitiesAndNCases = lt.newList("ARRAY_LIST")
-    lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 1))
-    lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 2))
-    lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 3))
-    lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 4))
-    lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 5))
+
+    try:
+        lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 1))
+    except:
+        lt.addLast(topCitiesAndNCases, createEmptyCase())
+
+    try:
+        lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 2))
+    except:
+        lt.addLast(topCitiesAndNCases, createEmptyCase())
+
+    try:
+        lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 3))
+    except:
+        lt.addLast(topCitiesAndNCases, createEmptyCase())
+
+    try:
+        lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 4))
+    except:
+        lt.addLast(topCitiesAndNCases, createEmptyCase())
+
+    try:
+        lt.addLast(topCitiesAndNCases, lt.getElement(citiesAndNCases, 5))
+    except:
+        lt.addLast(topCitiesAndNCases, createEmptyCase())
 
     # Se carga la lista creada anteriormente
     mp.put( outMap,
@@ -224,12 +244,36 @@ def getCasesByCity(analyzer, ciity):
     # Se crea una nueva lista para guardar los tres avistamientos mas antiguos y mas recientes de
     # ciudad dada por el usuario.        
     recentAndOlderCasesByCity = lt.newList("ARRAY_LIST")
-    lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 1))
-    lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 2))
-    lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 3))
-    lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))-2))
-    lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))-1))
-    lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))))
+
+    try:
+        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 1))
+    except:
+        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+
+    try:
+        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 2))
+    except:
+        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+
+    try:
+        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 3))
+    except:
+        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+
+    try: 
+        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))-2))
+    except:
+        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+
+    if lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))-1) == lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 1): 
+        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+    else:
+        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))-1))
+
+    if lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))) == lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), 1): 
+        lt.addLast(recentAndOlderCasesByCity, createEmptyCase())
+    else:
+        lt.addLast(recentAndOlderCasesByCity, lt.getElement(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)), lt.size(me.getValue(om.get(me.getValue(mp.get(outMap, "casesByCity")), ciity)))))
 
     mp.put( outMap,
             "recentAndOlderCasesByCity",
@@ -803,6 +847,17 @@ def dateToHour(date):
 
 def toHour(hour):
     return datetime.strptime(hour, "%H:%M:%f").time()
+
+def createEmptyCase():
+    return {
+            "datetime": "Not Available",
+            "city": "Not Available",
+            "state": "Not Available",
+            "city": "Not Available",
+            "state": "Not Available",
+            "country": "Not Available",
+            "shape": "Not Available",
+            "duration (seconds)": "Not Available"}
 
 #•••••••••••••••••••••••••••••••••••••••••
 # Funciones de comparacion
