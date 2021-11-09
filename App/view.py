@@ -23,7 +23,7 @@
 import config as cf
 import sys
 import controller
-#import model
+import model
 assert cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -31,7 +31,7 @@ from DISClib.DataStructures import mapentry as me
 from datetime import datetime
 from prettytable import PrettyTable
 
-ufosFile = 'UFOS//UFOS-utf8-large.csv'
+ufosFile = 'UFOS//UFOS-utf8-small.csv'
 cont = None
 
 
@@ -112,6 +112,18 @@ while loop:
         beginHour = input("Inserte la hora inical para el rango en formato HH:MM:SS: ")
         endHour = input("Inserte la hora final para el rango en formato HH:MM:SS: ")
         print(controller.getCasesBetweeenHours(cont, beginHour, endHour))
+    
+    elif inputs[0] == "6":
+        PrimeraFecha = input("Inserte la primera fecha en formato AAAA-MM-DD ")
+        UltimoDia = input("Inserte la hora final para el rango en formato AAAA-MM-DD ")
+        print(controller.getCountsightingsrangedates(cont, PrimeraFecha, UltimoDia))
+    
+    elif inputs[0] == "7":
+        LongitudMinima = float(input("Longitud Minima "))
+        LongitudMaxima = float(input("Longitud Maxima "))
+        LatitudMinima = float(input("Latitud Minima"))
+        LatitudMaxima = float(input("Latitud Maxima"))
+        print(controller.getsightingsofGeographicArea(cont, LongitudMinima, LongitudMaxima, LatitudMinima, LatitudMaxima))
 
 
     else:

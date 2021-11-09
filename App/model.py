@@ -114,7 +114,6 @@ def newAnalyzer():
                         comparefunction=None
                     )
             )
-    mp.put()
 
     return analyzer
 
@@ -2443,6 +2442,265 @@ def getCasesBetweeenHours(analyzer, beginHour, endHour):
 
     return answer
 
+def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
+
+    start_time = time.process_time()
+    
+    cases = me.getValue(
+                        mp.get(
+                                analyzer,
+                                "cases"
+                            )
+                    )
+    PrimerosTresUltimosTres = lt.newList(
+                            "ARRAY_LIST"
+                        )
+    for i in lt.iterator(cases):
+        if toDate(i["datetime"]) >= date(PrimeraFecha) and toDate(i["datetime"]) <= date(SegundaFecha):
+            lt.addLast(
+                        PrimerosTresUltimosTres, 
+                        i
+                    )
+
+    PrimerosTresUltimosTres = sortByDate(PrimerosTresUltimosTres)
+
+    list = me.getValue(mp.get(analyzer, "cases"))
+    PrimeAvistamiento = lt.getElement(list,1)
+
+    PrimerAvistamiento = PrettyTable([   "Datetime",
+                            "City",
+                            "State",
+                            "Country",
+                            "Shape",
+                            "Duration (Seconds)"])
+    
+    PrimerAvistamiento.add_row ([
+                    PrimeAvistamiento["datetime"],
+                    PrimeAvistamiento["city"],
+                    PrimeAvistamiento["state"],
+                    PrimeAvistamiento["country"],
+                    PrimeAvistamiento["shape"],
+                    PrimeAvistamiento["duration (seconds)"]
+                    ])
+    PrimerosUltimos = PrettyTable (["Datetime",
+                            "City",
+                            "State",
+                            "Country",
+                            "Shape",
+                            "Duration (Seconds)"])
+
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    1
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    1
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    1
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    1
+                                                )["duration (seconds)"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    1
+                                                    )["shape"]
+                                ]
+                            )
+
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    2
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    2
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    2
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    2
+                                                )["duration (seconds)"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    2
+                                                    )["shape"]
+                                ]
+                            )
+    
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    3
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                )["duration (seconds)"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                    )["shape"]
+                                ]
+                            )
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["duration (seconds)"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                    )["shape"]
+                                ]
+                            )
+    
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-2
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-2
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-2
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-2
+                                                )["duration (seconds)"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-2
+                                                    )["shape"]
+                                ]
+                            )
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )
+                                                )["city"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )
+                                                )["duration (seconds)"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )
+                                                    )["shape"]
+                                ]
+                            )
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+
+    # Se crea la salida total.
+    answer = f"\n================ Req No. 2 Inputs ================\n\nUFO Sightings between {PrimeraFecha} and {SegundaFecha} seconds.\n\n================ Req No. 2 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings dates.\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
+
+    return answer
+
+def 
+
+
 #•••••••••••••••••••••••••••••••••••••••••
 # Funciones para agregar informacion al catalogo
 #•••••••••••••••••••••••••••••••••••••••••
@@ -2482,6 +2740,10 @@ def toDate(date:str):
 
     """
     return datetime.strptime(date, '%Y-%m-%d %H:%M:%f')
+
+def date(date:str):
+
+    return datetime.strptime(date, '%Y/%m/%d')
 
 def firstAndLastFiveCases(analyzer):
 
