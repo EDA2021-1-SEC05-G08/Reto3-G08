@@ -2693,7 +2693,7 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
     elapsed_time_mseg = (stop_time - start_time)*1000
 
     # Se crea la salida total.
-    answer = f"\n================ Req No. 4 Inputs ================\n\nUFO Sightings between {PrimeraFecha} and {SegundaFecha} seconds.\n\n================ Req No. 4 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings dates.\n\n The first sightings was {(PrimerAvistamiento)}\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
+    answer = f"\n================ Req No. 4 Inputs ================\n\nUFO Sightings between {PrimeraFecha} and {SegundaFecha} seconds.\n\n================ Req No. 4 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings dates.\n\n The first sightings was \n\n{(PrimerAvistamiento)}\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
 
     return answer
 
@@ -3025,7 +3025,7 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
     elapsed_time_mseg = (stop_time - start_time)*1000
 
     # Se crea la salida total.
-    answer = f"\n================ Req No. 5 Inputs ================\n\nUFO Sightings between {LatitudMin} and {LatidudMax} seconds.\n\n================ Req No. 2 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings dates.\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
+    answer = f"\n================ Req No. 5 Inputs ================\n\nUFO Sightings between {LatitudMin} and {LatidudMax} seconds.\n\n================ Req No. 5 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings dates.\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
 
     return answer
     
