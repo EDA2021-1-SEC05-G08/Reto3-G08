@@ -99,7 +99,8 @@ def getCasesBetweeenHours(analyzer, beginHour, endHour):
 def getCountsightingsrangedates (analyzer, limiteInferior, LimiteMayor):
     return model.Countsightingsrangedates(analyzer, limiteInferior, LimiteMayor)
 
-#def getsightingsofGeographicArea (analyzer, longitudMin, longitudMax, latitudMin, latitudMax):
+def getsightingsofGeographicArea (analyzer, longitudMin, longitudMax, latitudMin, latitudMax):
+    return model.sightingsofGeographicArea(analyzer, longitudMin, longitudMax, latitudMin, latitudMax)
 
 # Funciones de ordenamiento
 
