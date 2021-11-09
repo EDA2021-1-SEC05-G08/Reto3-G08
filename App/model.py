@@ -2811,7 +2811,7 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     1
-                                                )["Shape"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
