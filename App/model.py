@@ -2462,7 +2462,7 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                         i
                     )
 
-    PrimerosTresUltimosTres = sortByDate(PrimerosTresUltimosTres)
+    PrimerosTresUltimosTres = sortDates(PrimerosTresUltimosTres)
 
     list = me.getValue(mp.get(analyzer, "cases"))
     PrimeAvistamiento = lt.getElement(list,1)
@@ -2484,7 +2484,6 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                     ])
     PrimerosUltimos = PrettyTable (["Datetime",
                             "City",
-                            "State",
                             "Country",
                             "Shape",
                             "Duration (Seconds)"])
@@ -2697,6 +2696,7 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
     answer = f"\n================ Req No. 2 Inputs ================\n\nUFO Sightings between {PrimeraFecha} and {SegundaFecha} seconds.\n\n================ Req No. 2 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings dates.\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
 
     return answer
+
 
 def 
 
