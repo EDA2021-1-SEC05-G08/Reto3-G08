@@ -2272,6 +2272,8 @@ def getCasesBetweeenHours(analyzer, beginHour, endHour):
 
     return answer
 
+#----------------------------------------
+
 def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
 
     start_time = time.process_time()
@@ -2558,6 +2560,7 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
 
     return answer
 
+#----------------------------------------
 
 def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,LatidudMax):
     start_time = time.process_time()
@@ -3013,8 +3016,6 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
 
     return answer
     
-
-
 #•••••••••••••••••••••••••••••••••••••••••
 # Funciones para agregar informacion al catalogo
 #•••••••••••••••••••••••••••••••••••••••••
@@ -3046,6 +3047,8 @@ def getCasesSize(analyzer):
 
     return lt.size(me.getValue(mp.get(analyzer, "cases")))
 
+#----------------------------------------
+
 def toDate(date:str):
 
     """
@@ -3055,9 +3058,13 @@ def toDate(date:str):
     """
     return datetime.strptime(date, '%Y-%m-%d %H:%M:%f')
 
+#----------------------------------------
+
 def date(date:str):
 
     return datetime.strptime(date, '%Y/%m/%d')
+
+#----------------------------------------
 
 def firstAndLastFiveCases(analyzer):
 
@@ -3186,6 +3193,8 @@ def firstAndLastFiveCases(analyzer):
 
     return table
 
+#----------------------------------------
+
 def dateToHour(date):
 
     """
@@ -3197,6 +3206,8 @@ def dateToHour(date):
 
     return datetime.strptime(date[11:len(date)+1], "%H:%M:%f").time()
 
+#----------------------------------------
+
 def toHour(hour):
 
     """
@@ -3207,6 +3218,8 @@ def toHour(hour):
     """
 
     return datetime.strptime(hour, "%H:%M:%f").time()
+
+#----------------------------------------
 
 def createEmptyCase():
 
@@ -3240,6 +3253,8 @@ def compareDates(case1, case2):
 
     return(toDate(case1["datetime"]) < toDate(case2["datetime"]))
 
+#----------------------------------------
+
 def compareNumbers(case1, case2):
 
     """
@@ -3249,6 +3264,8 @@ def compareNumbers(case1, case2):
     """
 
     return(case1["nCases"] > case2["nCases"])
+
+#----------------------------------------
 
 def compareSeconds(time1, time2):
 
@@ -3260,6 +3277,8 @@ def compareSeconds(time1, time2):
 
     return(float(time1) < float(time2))
 
+#----------------------------------------
+
 def compareHours(time1, time2):
 
     """
@@ -3269,6 +3288,8 @@ def compareHours(time1, time2):
     """
 
     return (datetime.strptime(time1, "%H:%M:%f").time() < datetime.strptime(time2, "%H:%M:%f").time())
+
+#----------------------------------------
 
 def compareLatitudes(case1,case2):
     """
@@ -3289,6 +3310,7 @@ def compareLatitudes(case1,case2):
 def sortByLatitude(data):
     return sa.sort(data,compareLatitudes)
 
+#----------------------------------------
 
 def sortByDate(analyzer):
 
@@ -3303,6 +3325,8 @@ def sortByDate(analyzer):
 
     return list
 
+#----------------------------------------
+
 def sortByNCases(data):
 
     """
@@ -3312,6 +3336,8 @@ def sortByNCases(data):
     """
 
     return sa.sort(data, compareNumbers)
+
+#----------------------------------------
 
 def sortSeconds(data):
 
@@ -3323,6 +3349,8 @@ def sortSeconds(data):
 
     return sa.sort(data, compareSeconds)
 
+#----------------------------------------
+
 def sortDates(data):
 
     """
@@ -3332,6 +3360,8 @@ def sortDates(data):
     """
 
     return sa.sort(data, compareDates)
+
+#----------------------------------------
 
 def sortHours(data):
 
