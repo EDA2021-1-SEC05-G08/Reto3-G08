@@ -64,7 +64,7 @@ def newAnalyzer():
     analyzer = mp.newMap(
                         5,
                         maptype = "CHAINING",
-                        loadfactor = 1.0,
+                        loadfactor = 4.0,
                         comparefunction = None
                     )
 
@@ -197,68 +197,11 @@ def getCasesByCity(analyzer, ciity):
                     i
                 )
 
-    # Se eliminan los avistamientos duplicados en cada ciudad.
-    for i in lt.iterator(cityKeys):
-
-        pos = 2
-        while pos <= lt.size(
-                                me.getValue(
-                                            om.get(
-                                                    me.getValue(
-                                                                mp.get(
-                                                                        analyzer,
-                                                                        "casesByCity"
-                                                                        )
-                                                                ),
-                                                    i
-                                                )
-                                            )
-                            ):
-
-            lt.deleteElement(
-                                me.getValue(
-                                            om.get(
-                                                    me.getValue(
-                                                                mp.get(
-                                                                        analyzer,
-                                                                        "casesByCity"
-                                                                    )
-                                                                ),
-                                                    i
-                                                )
-                                            ), 
-                            pos
-                            )
-            
-            pos += 2
-            pos -=1
-
-        om.put(
-                me.getValue(
-                            mp.get(
-                                    analyzer,
-                                    "casesByCity"
-                                    )
-                            ), 
-                i,
-                me.getValue(
-                            om.get(
-                                    me.getValue(
-                                                mp.get(
-                                                        analyzer,
-                                                        "casesByCity"
-                                                        )
-                                                ),
-                                i
-                                )
-                            )
-                )
-
     # Se incializa un nuevo mapa para guardar los datos de salida.
     outMap = mp.newMap(
                         5,
                         maptype = "CHAINING",
-                        loadfactor = 1.0,
+                        loadfactor = 4.0,
                         comparefunction = None
                     )
 
@@ -1295,63 +1238,6 @@ def getCasesBetweeenSeconds(analyzer, beginSeconds, endSeconds):
                     i
                 )
 
-    # Se eliminan los avistamientos duplicados en cada llave de
-    # segundos.
-    for i in lt.iterator(secondsKeys):
-
-        pos = 2
-        while pos <= lt.size(
-                                me.getValue(
-                                            om.get(
-                                                    me.getValue(
-                                                                mp.get(
-                                                                        analyzer,
-                                                                        "casesBySeconds"
-                                                                    )
-                                                                ),
-                                                    i
-                                                )
-                                            )
-                        ):
-
-            lt.deleteElement(
-                                me.getValue(
-                                            om.get(
-                                                    me.getValue(
-                                                                mp.get(
-                                                                        analyzer,
-                                                                        "casesBySeconds"
-                                                                    )
-                                                            ), 
-                                                    i
-                                                )
-                                        ), 
-                                pos
-                            )
-            pos += 2
-            pos -=1
-
-        om.put(
-                me.getValue(
-                            mp.get(
-                                    analyzer,
-                                    "casesBySeconds"
-                                )
-                            ), 
-                i, 
-                me.getValue(
-                            om.get(
-                                    me.getValue(
-                                                mp.get(
-                                                        analyzer, 
-                                                        "casesBySeconds"
-                                                    )
-                                                ), 
-                                    i
-                                )
-                        )
-            )
-
     # Se crea una nuva lista para agregar unicamente los segundos que se
     # encuentran en el rango de segundos dados por el ususario.
     casesInRange = lt.newList(
@@ -1907,62 +1793,6 @@ def getCasesBetweeenHours(analyzer, beginHour, endHour):
                             ), 
                     i
                 )
-
-    # Se eliminan los avistamientos duplicados en cada hora.
-    for i in lt.iterator(hoursKeys):
-        pos = 2
-        while pos <= lt.size(
-                                me.getValue(
-                                            om.get(
-                                                    me.getValue(
-                                                                mp.get(
-                                                                        analyzer,
-                                                                        "casesByHour"
-                                                                    )
-                                                            ), 
-                                                    
-                                                i
-                                            )
-                                        )
-                        ):
-
-            lt.deleteElement(
-                                me.getValue(
-                                            om.get(
-                                                    me.getValue(
-                                                                mp.get(
-                                                                        analyzer,
-                                                                        "casesByHour"
-                                                                    )
-                                                            ), 
-                                                    i
-                                                )
-                                        ), 
-                            pos
-                        )
-            pos += 2
-            pos -=1
-
-        om.put(
-                me.getValue(   
-                            mp.get(
-                                    analyzer,
-                                    "casesByHour"
-                                )
-                        ), 
-                i, 
-                me.getValue(
-                            om.get(
-                                    me.getValue(
-                                                mp.get(
-                                                        analyzer, 
-                                                        "casesByHour"
-                                                    )
-                                            ), 
-                                    i
-                                )
-                        )
-            )
 
     # Se crea una lista vacia para insertar las horas que se encuentran
     # dentro del rango ingresado por el usuario.

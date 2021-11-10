@@ -91,13 +91,13 @@ while loop:
 
     elif inputs[0] == "2":
         print("\nCargando información de crimenes ....\n")
-        controller.loadData(cont, ufosFile)
+        
+        print('Primeros y ultimos 5 avistamientos: ')
+        print(controller.loadData(cont, ufosFile))
         
         print('Total de avistamientos cargados: ' + str(controller.getCasesSize(cont)))
         
-        print('Primeros y ultimos 5 avistamientos: ')
 
-        print(controller.loadData(cont, ufosFile))
 
     elif inputs[0] == "3":
         city = input("Inserte la ciudad en la cual desea consultar la información: ")
