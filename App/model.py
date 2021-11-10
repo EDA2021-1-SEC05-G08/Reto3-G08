@@ -2294,29 +2294,24 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
 
     PrimerosTresUltimosTres = sortDates(PrimerosTresUltimosTres)
 
+    
+
     list = me.getValue(mp.get(analyzer, "cases"))
     PrimeAvistamiento = lt.getElement(list,1)
 
     PrimerAvistamiento = PrettyTable([   "Datetime",
+                            "Count"])
+    
+    PrimerAvistamiento.add_row ([
+                    PrimeAvistamiento["datetime"],
+                    1,
+                    ])
+    PrimerosUltimos = PrettyTable (["Datetime",
                             "City",
                             "State",
                             "Country",
                             "Shape",
                             "Duration (Seconds)"])
-    
-    PrimerAvistamiento.add_row ([
-                    PrimeAvistamiento["datetime"],
-                    PrimeAvistamiento["city"],
-                    PrimeAvistamiento["state"],
-                    PrimeAvistamiento["country"],
-                    PrimeAvistamiento["shape"],
-                    PrimeAvistamiento["duration (seconds)"]
-                    ])
-    PrimerosUltimos = PrettyTable (["Datetime",
-                            "City",
-                            "Country",
-                            "Shape",
-                            "Duration (Seconds)"])
 
     PrimerosUltimos.add_row(
                                 [
@@ -2333,17 +2328,22 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     1
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    1
                                                 )["country"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     1
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     1
-                                                    )["shape"]
+                                                    )["duration (seconds)"]
                                 ]
                             )
 
@@ -2358,6 +2358,11 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                                     PrimerosTresUltimosTres,
                                                     2
                                                 )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    2
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2367,12 +2372,12 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     2
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     2
-                                                    )["shape"]
+                                                    )["duration (seconds)"]
                                 ]
                             )
     
@@ -2387,6 +2392,11 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                                     PrimerosTresUltimosTres,
                                                     3
                                                 )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2396,12 +2406,12 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     3
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     3
-                                                    )["shape"]
+                                                    )["duration (seconds)"]
                                 ]
                             )
     PrimerosUltimos.add_row(
@@ -2419,6 +2429,13 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                                             PrimerosTresUltimosTres
                                                         )-1
                                                 )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                        PrimerosTresUltimosTres
+                                                    )-1
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2432,14 +2449,14 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )-1
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )-1
-                                                    )["shape"]
+                                                    )["duration (seconds)"]
                                 ]
                             )
     
@@ -2458,6 +2475,13 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                                             PrimerosTresUltimosTres
                                                         )-2
                                                 )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                        PrimerosTresUltimosTres
+                                                    )-2
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2471,14 +2495,14 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )-2
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )-2
-                                                    )["shape"]
+                                                    )["duration (seconds)"]
                                 ]
                             )
     PrimerosUltimos.add_row(
@@ -2496,6 +2520,13 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                                             PrimerosTresUltimosTres
                                                         )
                                                 )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                        PrimerosTresUltimosTres
+                                                    )
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2509,21 +2540,21 @@ def Countsightingsrangedates(analyzer, PrimeraFecha, SegundaFecha):
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )
-                                                    )["shape"]
+                                                    )["duration (seconds)"]
                                 ]
                             )
     stop_time = time.process_time()
     elapsed_time_mseg = (stop_time - start_time)*1000
 
     # Se crea la salida total.
-    answer = f"\n================ Req No. 4 Inputs ================\n\nUFO Sightings between {PrimeraFecha} and {SegundaFecha} seconds.\n\n================ Req No. 4 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings dates.\n\n The first sightings was \n\n{(PrimerAvistamiento)}\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
+    answer = f"\n================ Req No. 4 Inputs ================\n\nUFO Sightings between {PrimeraFecha} and {SegundaFecha} seconds.\n\n================ Req No. 4 answer ================\n\nThere are {lt.size(cases)} different UFO sightings dates.\n\n The first sighting date is \n\n{(PrimerAvistamiento)}\n\n There are {(lt.size(PrimerosTresUltimosTres))} between: {(PrimeraFecha)} and {(SegundaFecha)}\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
 
     return answer
 
@@ -2578,6 +2609,7 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                     ])
     PrimerosUltimos = PrettyTable (["Datetime",
                             "City",
+                            "State",
                             "Country",
                             "Shape",
                             "Duration (Seconds)",
@@ -2595,6 +2627,11 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                                     PrimerosTresUltimosTres,
                                                     1
                                                 )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    1
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2604,12 +2641,12 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     1
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     1
-                                                    )["shape"],
+                                                    )["duration (seconds)"],
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     1
@@ -2632,6 +2669,11 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                                     PrimerosTresUltimosTres,
                                                     2
                                                 )["city"],
+                                            
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    2
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2641,12 +2683,12 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     2
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     2
-                                                    )["shape"],
+                                                    )["duration (seconds)"],
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     2
@@ -2654,95 +2696,6 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     2
-                                                    )["longitude"]
-                                ]
-                            )
-    
-    PrimerosUltimos.add_row(
-                                [
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres, 
-                                                    3
-                                                )["datetime"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    3
-                                                )["city"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    3
-                                                )["country"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    3
-                                                )["duration (seconds)"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    3
-                                                    )["shape"],
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    3
-                                                    )["latitude"],
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    3
-                                                    )["longitude"]
-                                ]
-                            )
-    PrimerosUltimos.add_row(
-                                [
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres, 
-                                                    lt.size(
-                                                            PrimerosTresUltimosTres
-                                                        )-1
-                                                )["datetime"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    lt.size(
-                                                            PrimerosTresUltimosTres
-                                                        )-1
-                                                )["city"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    lt.size(
-                                                            PrimerosTresUltimosTres
-                                                        )-1
-                                                )["country"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    lt.size(
-                                                            PrimerosTresUltimosTres
-                                                        )-1
-                                                )["duration (seconds)"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    lt.size(
-                                                            PrimerosTresUltimosTres
-                                                        )-1
-                                                    )["shape"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    lt.size(
-                                                            PrimerosTresUltimosTres
-                                                        )-1
-                                                    )["latitude"],
-
-                                    lt.getElement(
-                                                    PrimerosTresUltimosTres,
-                                                    lt.size(
-                                                            PrimerosTresUltimosTres
-                                                        )-1
                                                     )["longitude"]
                                 ]
                             )
@@ -2751,6 +2704,107 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                 [
                                     lt.getElement(
                                                     PrimerosTresUltimosTres, 
+                                                    3
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                    )["duration (seconds)"],
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                    )["latitude"],
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    3
+                                                    )["longitude"]
+                                ]
+                            )
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                    )["duration (seconds)"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                    )["latitude"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-1
+                                                    )["longitude"]
+                                ]
+                            )
+    
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )-2
@@ -2762,6 +2816,13 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                                             PrimerosTresUltimosTres
                                                         )-2
                                                 )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )-2
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2775,14 +2836,14 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )-2
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )-2
-                                                    )["shape"],
+                                                    )["duration (seconds)"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2814,6 +2875,13 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                                             PrimerosTresUltimosTres
                                                         )
                                                 )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    lt.size(
+                                                            PrimerosTresUltimosTres
+                                                        )
+                                                )["state"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2827,14 +2895,14 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )
-                                                )["duration (seconds)"],
+                                                )["shape"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
                                                     lt.size(
                                                             PrimerosTresUltimosTres
                                                         )
-                                                    )["shape"],
+                                                    )["duration (seconds)"],
 
                                     lt.getElement(
                                                     PrimerosTresUltimosTres,
@@ -2855,7 +2923,7 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
     elapsed_time_mseg = (stop_time - start_time)*1000
 
     # Se crea la salida total.
-    answer = f"\n================ Req No. 5 Inputs ================\n\nUFO Sightings between {LatitudMin} and {LatidudMax} seconds.\n\n================ Req No. 5 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings dates.\n\nThe first 3 and last 3 UFO sightings in the dates are:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
+    answer = f"\n================ Req No. 5 Inputs ================\n\nUFO Sightings between latitude range of {LatitudMin} and {LatidudMax} \n plus Longitude range of {(LongitudMin)} and {(longitudMax)}.\n\n================ Req No. 5 answer ================\n\nThere are {lt.size(PrimerosTresUltimosTres)} different UFO sightings in the current area.\n\nThe first 5 and last 5 UFO sightings in this time area:\n\n{PrimerosUltimos}\n\nThe function took {elapsed_time_mseg} milliseconds to execute.\n"
 
     return answer
     
