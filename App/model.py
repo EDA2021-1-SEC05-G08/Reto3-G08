@@ -2741,6 +2741,91 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                                     )["longitude"]
                                 ]
                             )
+    
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    4
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    4
+                                                )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    4
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    4
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    4
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    4
+                                                    )["duration (seconds)"],
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    4
+                                                    )["latitude"],
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    4
+                                                    )["longitude"]
+                                ]
+                            )
+    
+    PrimerosUltimos.add_row(
+                                [
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres, 
+                                                    5
+                                                )["datetime"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    5
+                                                )["city"],
+                                    
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    5
+                                                )["state"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    5
+                                                )["country"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    5
+                                                )["shape"],
+
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    5
+                                                    )["duration (seconds)"],
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    5
+                                                    )["latitude"],
+                                    lt.getElement(
+                                                    PrimerosTresUltimosTres,
+                                                    5
+                                                    )["longitude"]
+                                ]
+                            )
+
     PrimerosUltimos.add_row(
                                 [
                                     lt.getElement(
@@ -2860,6 +2945,7 @@ def sightingsofGeographicArea(analyzer,LongitudMin,longitudMax,LatitudMin,Latidu
                                                     )["longitude"]
                                 ]
                             )
+    
     PrimerosUltimos.add_row(
                                 [
                                     lt.getElement(
